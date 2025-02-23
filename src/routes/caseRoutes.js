@@ -14,9 +14,20 @@ router.post('/', (req, res) => {
   res.status(201).json(newCase);
 });
 
+
+router.put('/:caseId/close', (req, res) => {
+  const caseId = parseInt(req.params.caseId, 10);
+  const existingCase = cases.find((caseItem) => caseItem.caseId === caseId);
+  if (!existingCase) {
+    return res.status(404).json({ error: 'Case not found' });
+  }
+  existingCase.status = 'closed';
+  return res.json(existingCase);
+});
+
 router.get('/user/:userId', (req, res) => {
   const userId = parseInt(req.params.userId, 10);
-  const filteredCases = cases.filter((caseItem) => caseItem.ownerId === userId);
+  const filteredCases = cases.filter((caseItem) => caseItem.ownerId === userId && caseItem.status === 'open');
   if (filteredCases.length === 0) {
     return res.status(404).json({ error: 'No cases found for this user' });
   }
