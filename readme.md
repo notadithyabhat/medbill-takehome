@@ -51,6 +51,8 @@ Testing done with Postman so far:
 
 # API Endpoints
 
+Note: Users already exist in the database.
+
 ### 1) **Create a new case**  
 - **Method**: `POST /cases`  
 - **Request Body** (JSON):
