@@ -20,6 +20,9 @@
 
 I think these three entities are enough to cover all the requirements. I started off by created list of objects for each data and defined each models in the models folder.
 
+Next Steps:
+1. Created the case route to create a new case for a user and get the list of cases for a user. Tested with postman and it works as expected. 
+
 
 
 
