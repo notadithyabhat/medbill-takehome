@@ -1,49 +1,43 @@
 const express = require('express');
 const router = express.Router();
-
 const Attachment = require('../models/Attachment');
 const { cases } = require('../data/caseStore');
 const { messages } = require('../data/messageStore');
 const { attachments } = require('../data/attachmentStore');
-const { generateThumbnail } = require('.../utilities/thumbnailGenerator');
+const { generateThumbnail } = require('../utilities/thumbnailGenerator');
 
 router.post('/:caseId/messages/:messageId/attachments', async (req, res) => {
   const { caseId, messageId } = req.params;
   const { fileName, fileUrl } = req.body;
-
-  const existingCase = cases.find((c) => c.caseId === Number(caseId));
+  const existingCase = cases.find(c => c.caseId === Number(caseId));
   if (!existingCase) {
     return res.status(404).json({ error: 'Case not found' });
   }
-
-  const existingMessage = messages.find((m) => m.messageId === Number(messageId));
+  const existingMessage = messages.find(m => m.messageId === Number(messageId));
   if (!existingMessage) {
     return res.status(404).json({ error: 'Message not found' });
   }
-
-  if (!fileName || !fileUrl) {
-    return res.status(400).json({ error: 'fileName and fileUrl are required' });
-  }
-
-  const newAttachment = new Attachment(Number(messageId), fileName, fileUrl);
-  newAttachment.attachmentId = attachments.length + 1;
-  attachments.push(newAttachment);
-  existingMessage.attachments = existingMessage.attachments || [];
-  existingMessage.attachments.push(newAttachment);
-
-
   try {
-    const thumbnailPath = `public/thumbnails/thumb_${fileName}`;
-    console.log('Generating thumbnail:', thumbnailPath);
-    await generateThumbnail(fileUrl, thumbnailPath);
-    newAttachment.thumbnailUrl = thumbnailPath;
+    const newAttachment = Attachment.create({
+      attachmentId: attachments.length + 1,
+      messageId: messageId,
+      fileName,
+      fileUrl
+    });
+    attachments.push(newAttachment);
+    existingMessage.attachments = existingMessage.attachments || [];
+    existingMessage.attachments.push(newAttachment);
+    try {
+      const thumbnailPath = `public/thumbnails/thumb_${fileName}`;
+      await generateThumbnail(fileUrl, thumbnailPath);
+      newAttachment.thumbnailUrl = thumbnailPath;
+    } catch (error) {
+      newAttachment.thumbnailUrl = null;
+    }
+    return res.status(201).json(newAttachment);
   } catch (error) {
-    console.error('Thumbnail generation failed:', error);
-    newAttachment.thumbnailUrl = null;
+    return res.status(400).json({ error: error.message });
   }
-
-  return res.status(201).json(newAttachment);
-  
 });
 
 module.exports = router;

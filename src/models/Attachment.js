@@ -1,11 +1,19 @@
 class Attachment {
-    constructor(messageId, fileName, fileUrl, thumbnailUrl=null) {
-      this.messageId = messageId;
-      this.fileName = fileName;
-      this.fileUrl = fileUrl;
-      this.thumbnailUrl = thumbnailUrl;
+  constructor(attachmentId, messageId, fileName, fileUrl) {
+    this.attachmentId = attachmentId;
+    this.messageId = messageId;
+    this.fileName = fileName;
+    this.fileUrl = fileUrl;
+  }
+  static validate({ fileName, fileUrl }) {
+    if (!fileName || !fileUrl) {
+      throw new Error('fileName and fileUrl are required');
     }
   }
-  
-  module.exports = Attachment;
-  
+  static create(data) {
+    const { attachmentId, messageId, fileName, fileUrl } = data;
+    Attachment.validate({ fileName, fileUrl });
+    return new Attachment(attachmentId, Number(messageId), fileName, fileUrl);
+  }
+}
+module.exports = Attachment;
