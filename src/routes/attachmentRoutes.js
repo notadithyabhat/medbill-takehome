@@ -16,7 +16,7 @@ router.post('/:caseId/messages/:messageId/attachments', (req, res) => {
       return res.status(400).json({ error: 'fileName and fileUrl are required' });
     }
   
-    // 4) Create new attachment record
+    // Create new attachment record
     const newAttachment = {
       attachmentId: attachments.length + 1,
       messageId: Number(messageId),

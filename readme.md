@@ -1,5 +1,7 @@
 # Requirements
 
+Note: Tracking with Git, so that I can revert back incase I dont complete a feature for version control.
+
 ## Data Modelling
 ### Entities
 1. Users - the end user who has an open case + staff + AI
@@ -21,13 +23,14 @@
 I think these three entities are enough to cover all the requirements. I started off by created list of objects for each data and defined each models in the models folder. 
 
 # Major Design Decision:
+
 1. I am not storing the attachment in the message but only storing the URL because in most applications, it is better to store the attachment in something like s3 or a cloud storage and the URL is enough to access the attachment.
 2. A case can only be accessed by the owner/staff/AI.
 
 # Implementation
 1. Created the case route to create a new case for a user and get the list of cases for a user. Tested with postman and it works as expected. 
-2. Created the message route to create a new message. Added a check to only proceed it the case exists. Since a message belongs to a case, I've mounted the mesage route to the case route. Also another thing is that the case can be accessed only the owner of the case as well as the Staff or AI. So Added checks for those accordingly. 
-3. Next with the attachments, I could either store in the message or have a seperate attachment store. I decided to create a seperate store so that it's easy to add multiple attachments to a message. Most of the validation remains the same as the messages route. I also updated the message to add the attachments list if it exists. 
+2. Created the message route to create a new message. Added a check to only proceed it the case exists. Since a message belongs to a case, I've mounted the mesage route to the case route. Additionally added checks to make sure the case can be accessed only the owner of the case as well as the Staff or AI.
+3. Next with the attachments, I could either store in the message or have a seperate attachment store. I decided to create a seperate store so that it's easy to add multiple attachments to a message. Most of the validation remains the same as the messages route. Updated the message to add the attachments list if it exists. 
 
 This should cover the basic requirements.
 
@@ -43,7 +46,8 @@ Testing done with Postman so far:
 # Next Steps
 1. I'd probably switch to a graphQL messages since the things like cases/messages/attachments is getting a bit longer. I had thought of using it, but given the time constraint and since I haven't worked with it in a while so decided to implement with REST instead
 2. Create a test suite using Jest to test each of the routes
-3. Implement a thumbnail generator for the attachments. Th
+3. Implement a thumbnail generator for the attachments. Would reqire downloading the file and generating the thumbnail. This is making me rethink whether not storing the file locally is a good idea for our current use case.
+4. Probably dedicate more time for documentatiion, haha.
 
 
 
