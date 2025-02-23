@@ -6,6 +6,7 @@ const { users } = require('../data/userStore');
 const { cases } = require('../data/caseStore');
 const { messages } = require('../data/messageStore');
 const { attachments } = require('../data/attachmentStore');
+const { generateThumbnail } = require('../utilities/thumbnailGenerator');
 
 router.post('/:caseId/messages', (req, res) => {
   const { caseId } = req.params;
@@ -41,6 +42,17 @@ router.post('/:caseId/messages', (req, res) => {
       fileUrl: attachment.fileUrl
     };
     attachments.push(newAttachment);
+
+    console.log('Generating thumbnail for attachment:', attachment.fileName);
+
+    try {
+      const thumbnailPath = `public/thumbnails/thumb_${attachment.fileName}`;
+      console.log('Generating thumbnail:', thumbnailPath);
+      generateThumbnail(attachment.fileUrl, thumbnailPath);
+      newAttachment.thumbnailUrl = thumbnailPath;
+    } catch (error) {
+      console.error('Error generating thumbnail:', error);
+    }
   }
   return res.status(201).json(newMessage);
 });

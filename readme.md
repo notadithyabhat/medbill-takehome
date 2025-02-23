@@ -12,7 +12,7 @@ Note: Tracking with Git, so that I can revert back incase I dont complete a feat
 ### Relationship
 1. Users -> Cases (1:N)
 2. Cases -> Messages (1:N)
-3. Messages -> Attachments (0:N)
+3. Messages -> Attachments (1:N)
 
 ### ER Model
 1. User - userId, name, type(AI, staff, user)
@@ -20,7 +20,7 @@ Note: Tracking with Git, so that I can revert back incase I dont complete a feat
 3. message - messageId, caseId(FK to Case), senderId(FK to User), content, createdAt, attachment
 4. attachment - messageId(FK to MessageStore), fileName, fileUrl
 
-I think these three entities are enough to cover all the requirements. I started off by created list of objects for each data and defined each models in the models folder. 
+I think these three entities are enough to cover all the requirements. I started off by creating list of objects for each data and defined each models in the models folder. 
 
 # Major Design Decision:
 
@@ -45,11 +45,12 @@ Testing done with Postman so far:
 
 
 # Next Steps
-1. I'd probably switch to a graphQL messages since the things like cases/messages/attachments is getting a bit longer. I had thought of using it, but given the time constraint and since I haven't worked with it in a while so decided to implement with REST instead
+1. I'd probably switch to a graphQL messages since the things like cases/messages/attachments is getting a bit longer. I had thought of using it, but given the time constraint and since I haven't worked with it in a while, decided to implement with REST instead
 2. Create a test suite using Jest to test each of the routes
 3. Implement a thumbnail generator for the attachments. Would reqire downloading the file and generating the thumbnail. This is making me rethink whether not storing the file locally is a good idea for our current use case.
 4. Probably dedicate more time for documentatiion, haha.
 5. Deleted a case, message or attachment will cause case.length + 1 to cause replication errors. Need to have a counter for next caseId, messageId and attachmentId
+6. Move the validations into the data model instead of the routes
 
 # API Endpoints
 
