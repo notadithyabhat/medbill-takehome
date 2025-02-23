@@ -17,7 +17,7 @@ router.post('/:caseId/messages', (req, res) => {
   if (content.trim().length === 0) {
     return res.status(400).json({ error: 'Message content cannot be empty' });
   }
-  const existingCase = cases.find((c) => c.caseId === Number(caseId));
+  const existingCase = cases.find((c) => c.caseId === Number(caseId) && c.status === 'open');
   if (!existingCase) {
     return res.status(404).json({ error: 'Case not found' });
   }
@@ -59,7 +59,7 @@ router.post('/:caseId/messages', (req, res) => {
 
 router.get('/:caseId/messages', (req, res) => {
   const { caseId } = req.params;
-  const existingCase = cases.find((c) => c.caseId === Number(caseId));
+  const existingCase = cases.find((c) => c.caseId === Number( caseId) && c.status === 'open');
   if (!existingCase) {
     return res.status(404).json({ error: 'Case not found' });
   }
@@ -69,7 +69,7 @@ router.get('/:caseId/messages', (req, res) => {
 
 router.get('/:caseId/messages/:messageId/attachments', (req, res) => {
   const { caseId, messageId } = req.params;
-  const existingCase = cases.find((c) => c.caseId === Number(caseId));
+  const existingCase = cases.find((c) => c.caseId === Number(caseId) && c.status === 'open');
   if (!existingCase) {
     return res.status(404).json({ error: 'Case not found' });
   }
