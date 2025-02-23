@@ -1,2 +1,5 @@
+const cases = [];
 
-module.exports = [];
+module.exports = {
+  cases,
+};

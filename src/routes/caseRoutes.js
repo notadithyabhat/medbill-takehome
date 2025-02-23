@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const  cases = require('../data/caseStore');
+const { cases } = require('../data/caseStore');
 
 router.post('/', (req, res) => {
     const { ownerId, issueDescription } = req.body;
@@ -23,14 +23,13 @@ router.post('/', (req, res) => {
 });
 
 router.get('/user/:userId', (req, res) => {
-    const userIdParam = req.params.userId;      // "1" (string)
-    // If your stored ownerId is numeric, parse it:
+    const userIdParam = req.params.userId;    
+    
     const userId = parseInt(userIdParam, 10);
   
-    // Filter the in-memory cases
+
     const filteredCases = cases.filter((caseItem) => caseItem.ownerId === userId);
   
-    // Decide if you want to return an empty array or 404 if no cases
     if (filteredCases.length === 0) {
       return res.status(404).json({ error: 'No cases found for this user' });
     }

@@ -22,6 +22,8 @@ I think these three entities are enough to cover all the requirements. I started
 
 Next Steps:
 1. Created the case route to create a new case for a user and get the list of cases for a user. Tested with postman and it works as expected. 
+2. Created the message route to create a new message. Added a check to only proceed it the case exists. Since a message belongs to a case, I've mounted the mesage route to the case route. Also another thing is that the case can be accessed only the owner of the case as well as the Staff or AI. So Added checks for those accordingly.
+3. 
 
 
 
