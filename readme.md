@@ -49,7 +49,67 @@ Testing done with Postman so far:
 3. Implement a thumbnail generator for the attachments. Would reqire downloading the file and generating the thumbnail. This is making me rethink whether not storing the file locally is a good idea for our current use case.
 4. Probably dedicate more time for documentatiion, haha.
 
+# API Endpoints
 
+### 1) **Create a new case**  
+- **Method**: `POST /cases`  
+- **Request Body** (JSON):
+  ```json
+  {
+    "ownerId": 1,
+    "issueDescription": "Having a billing issue"
+  }
+  ```
+- **Result**: Returns the new case object.  
 
+### 2) **Get all cases for a specific user**  
+- **Method**: `GET /cases/user/:userId`  
+- **Example**: `GET /cases/user/1`  
+- **Result**: Returns a list of all cases owned by user 1. If none found, returns a 404.  
 
+---
 
+### 3) **Create a message in a case**  
+- **Method**: `POST /cases/:caseId/messages`  
+- **Request Body** :
+  ```json
+  {
+    "senderId": 1,
+    "content": "Hello, can someone help me?",
+    "attachment": {
+      "fileName": "receipt.png",
+      "fileUrl": "https://somewhere.com/receipt.png"
+    }
+  }
+  ```
+  (The `attachment` part is optional.)  
+- **Rules**:  
+  - `content` shouldn’t be empty.  
+  - If `senderId` belongs to a regular user, it must match the case owner.  
+  - Staff or AI can post to any case.  
+- **Result**: Returns the newly created message object.
+
+### 4) **Get messages for a case**  
+- **Method**: `GET /cases/:caseId/messages`  
+- **Example**: `GET /cases/1/messages`  
+- **Result**: Returns an array of all messages in case 1.  
+
+---
+
+### 5) **Add a separate attachment to an existing message**  
+- **Method**: `POST /cases/:caseId/messages/:messageId/attachments`  
+- **Request Body** (JSON):
+  ```json
+  {
+    "fileName": "xray.pdf",
+    "fileUrl": "https://cdn.example.com/xray.pdf"
+  }
+  ```
+- **Result**: Returns the newly created attachment object.  
+
+---
+
+### 6) **Get attachments for a message**  
+- **Method**: `GET /cases/:caseId/messages/:messageId/attachments`  
+- **Example**: `GET /cases/1/messages/1/attachments`  
+- **Result**: Returns an array of attachments that were linked to message #1 in case #1.
