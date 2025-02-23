@@ -26,6 +26,7 @@ I think these three entities are enough to cover all the requirements. I started
 
 1. I am not storing the attachment in the message but only storing the URL because in most applications, it is better to store the attachment in something like s3 or a cloud storage and the URL is enough to access the attachment.
 2. A case can only be accessed by the owner/staff/AI.
+3. A case, message and attachment are not going to be deleted. They are going to be marked as deleted.
 
 # Implementation
 1. Created the case route to create a new case for a user and get the list of cases for a user. Tested with postman and it works as expected. 
@@ -48,10 +49,12 @@ Testing done with Postman so far:
 2. Create a test suite using Jest to test each of the routes
 3. Implement a thumbnail generator for the attachments. Would reqire downloading the file and generating the thumbnail. This is making me rethink whether not storing the file locally is a good idea for our current use case.
 4. Probably dedicate more time for documentatiion, haha.
+5. Deleted a case, message or attachment will cause case.length + 1 to cause replication errors. Need to have a counter for next caseId, messageId and attachmentId
 
 # API Endpoints
 
 Note: Users already exist in the database.
+### Instructions: npm start and make requests to the endpoints
 
 ### 1) **Create a new case**  
 - **Method**: `POST /cases`  
