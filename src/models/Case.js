@@ -5,6 +5,7 @@ class Case {
       this.issueDescription = issueDescription;
       this.status = 'open';
       this.createdAt = new Date();
+      this.escaleted = false;
     }
   }
   

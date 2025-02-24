@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+
+
 const Message = require('../models/Message');
 const { users } = require('../data/userStore');
 const { cases } = require('../data/caseStore');
@@ -35,6 +37,10 @@ router.post('/:caseId/messages', (req, res) => {
         newAttachment.thumbnailUrl = null;
       }
     }
+
+    const io = req.app.get('io');
+    io.emit('newMessage', newMessage);
+
     return res.status(201).json(newMessage);
   } catch (error) {
     return res.status(400).json({ error: error.message });
@@ -65,7 +71,47 @@ router.get('/:caseId/messages/:messageId/attachments', (req, res) => {
   return res.json(filteredAttachments);
 });
 
-router.post('/:caseId/messages/:messageId/edit', (req, res) => {
+
+router.get('/:caseId/messages/search', (req, res) => {
+  const { caseId } = req.params;
+  const { query, senderId, startDate, endDate } = req.query;
+  const existingCase = cases.find(c => c.caseId === Number(caseId) && c.status === 'open');
+  if (!existingCase) {
+    return res.status(404).json({ error: 'Case not found' });
+  }
+  let filteredMessages = messages.filter(m => m.caseId === Number(caseId));
+  if (query) {
+    lowerCaseQuery = query.toLowerCase();
+    filteredMessages = filteredMessages.filter(m => {
+      const messageMatchesQuery = m.content.toLowerCase().includes(lowerCaseQuery)
+      let attachmentMatchesQuery = false;
+      if (m.attachment) {
+        if (m.attachment.fileName &&  m.attachment.fileName.toLowerCase().includes(lowerCaseQuery)) {
+          attachmentMatchesQuery = true;
+        }
+        if (m.attachment.fileUrl && m.attachment.fileUrl.toLowerCase().includes(lowerCaseQuery)) {
+          attachmentMatchesQuery = true;
+        }
+      }
+      return messageMatchesQuery || attachmentMatchesQuery;
+  });
+
+  if (senderId) {
+    filteredMessages = filteredMessages.filter(m => m.senderId === Number(senderId));
+  };
+  if (startDate && endDate) {
+    filteredMessages = filteredMessages.filter(m => {
+      const messageDate = new Date(m.createdAt);
+      const startDateObj = new Date(startDate);
+      const endDateObj = new Date(endDate);
+      return messageDate >= startDateObj && messageDate <= endDateObj;
+    }); 
+    };
+  }
+  return res.json(filteredMessages);
+});
+
+router.put('/:caseId/messages/:messageId/edit', (req, res) => {
   const { caseId, messageId } = req.params;
   const { content, senderId } = req.body;
   const existingCase = cases.find(c => c.caseId === Number(caseId) && c.status === 'open');

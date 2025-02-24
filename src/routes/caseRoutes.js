@@ -47,4 +47,18 @@ router.get('/user/:userId', (req, res) => {
   return res.json(filteredCases);
 });
 
+router.put('/:caseId/escalate', (req, res) => {
+  const caseId = parseInt(req.params.caseId, 10);
+  const existingCase = cases.find(c => c.caseId === caseId);
+  if (!existingCase) {
+    return res.status(404).json({ error: 'Case not found' });
+  }
+  existingCase.escalated = true;
+
+  io = req.app.get('io');
+  io.emit('case-escalated', existingCase);
+
+  return res.json(existingCase);
+});
+
 module.exports = router;
